@@ -1,0 +1,21 @@
+{
+  "cases": [
+    {
+      "case": "4698",
+      "parent": "258",
+      "partition": "training",
+      "dataset_sha256": "b4c6808a603392b52a67dd4e2046a6fa45cefcbff49404e53ebaca813c05240e",
+      "prediction_sha256": "56314d46d43c449c997e8aba2a85dd758580d52863fe12e5c9aabaca7065ede8",
+      "wall_sha256": "a0a4bd691120b9899c150276c8bc824fefaf30c42678b4986c26ea5eebc6390d",
+      "prediction_source": "runs/parent_followup_20261008/geometry_replay_20261008/4698/candidate_baseline.npz",
+      "relative_l2": 0.15666127417597586
+    }
+  ],
+  "scope": "One saved training example (4698), not a held-out evaluation. No live model inference runs on GitHub Pages.",
+  "animation": "Streamlines interpolate a steady velocity field. Moving dots illustrate direction, not pulsatile flow or calibrated particle time.",
+  "visualization": {
+    "surface": "Topology-preserving decimation, 45 percent reduction",
+    "samples": "One source point per occupied Cartesian cell, 25 cells across longest dimension",
+    "streamlines": "170 geometry-only seeds; IDW of 6 neighbors; normalized RK2 steps; VTK vessel clipping; no new physics simulation"
+  }
+}

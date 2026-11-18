@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Vessel shape, predicted velocity, CFD reference, and relative L2 error.">
+  <title>Vessel flow</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+  <nav class="tabs" role="tablist" aria-label="View">
+    <button data-mode="geometry" role="tab" aria-selected="true">Vessel shape</button>
+    <button data-mode="prediction" role="tab" aria-selected="false">Prediction</button>
+    <button data-mode="reference" role="tab" aria-selected="false">CFD reference</button>
+    <button data-mode="error" role="tab" aria-selected="false">Error</button>
+    <button data-mode="compare" role="tab" aria-selected="false">Compare</button>
+  </nav>
+  <section id="viewport" aria-label="Drag the vessel to rotate; scroll to zoom">
+    <div class="view" id="viewA"><span class="view-label" id="labelA" hidden>Prediction</span><div class="view-canvas" id="canvasA"></div></div>
+    <div class="view" id="viewB" hidden><span class="view-label">CFD reference</span><div class="view-canvas" id="canvasB"></div></div>
+    <div class="legend" id="legend" hidden><div class="legend-heading"><span id="legendTitle">Speed</span><span>m/s</span></div><div id="colorbar"></div><div class="ticks"><span>0</span><span id="legendMid"></span><span id="legendMax"></span></div></div>
+    <p id="webglError" hidden>3D graphics are unavailable in this browser.</p>
+  </section>
+  <section class="error-box" aria-label="Relative L2 velocity error">
+    <div class="error-value"><h1>Relative L₂ error</h1><output id="relativeError">15.67<span>%</span></output><small>Training vessel 4698</small></div>
+    <div class="equation">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="Relative L2 error equals the square root of the sum of squared vector prediction errors, divided by the square root of the sum of squared reference velocities, multiplied by 100 percent">
+        <mrow><mfrac>
+          <msqrt><mrow><munder><mo>∑</mo><mi>i</mi></munder><msup><mrow><mo>‖</mo><msub><mover accent="true"><mi mathvariant="bold">v</mi><mo>^</mo></mover><mi>i</mi></msub><mo>−</mo><msub><mi mathvariant="bold">v</mi><mi>i</mi></msub><mo>‖</mo></mrow><mn>2</mn></msup></mrow></msqrt>
+          <msqrt><mrow><munder><mo>∑</mo><mi>i</mi></munder><msup><mrow><mo>‖</mo><msub><mi mathvariant="bold">v</mi><mi>i</mi></msub><mo>‖</mo></mrow><mn>2</mn></msup></mrow></msqrt>
+        </mfrac><mo>×</mo><mn>100</mn><mo>%</mo></mrow>
+      </math>
+      <p>v̂ = saved prediction &nbsp;·&nbsp; v = CFD reference</p>
+    </div>
+  </section>
+</main>
+<script src="data.js"></script><script src="app.bundle.js"></script>
+</body>
+</html>
