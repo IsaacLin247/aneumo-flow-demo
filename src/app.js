@@ -28,14 +28,41 @@ class VesselView {
     this.reset();new ResizeObserver(()=>this.resize()).observe(element);
   }
   reset(){this.camera.position.set(4.5,4.5,4.3);this.controls.target.set(0,0,0);this.camera.zoom=1;this.camera.updateProjectionMatrix();this.controls.update();}
-  resize(){const w=this.element.clientWidth,h=this.element.clientHeight;if(!w||!h)return;this.renderer.setSize(w,h,false);const half=1.85*Math.max(1,h/w);this.camera.left=-half*w/h;this.camera.right=half*w/h;this.camera.top=half;this.camera.bottom=-half;this.camera.updateProjectionMatrix();}
+  resize(){const w=this.element.clientWidth,h=this.element.clientHeight;if(!w||!h)return;this.renderer.setSize(w,h,false);this.centerVessel();}
+  centerVessel(){
+    const rect=this.element.getBoundingClientRect(),w=rect.width,h=rect.height;
+    if(!w||!h||!this.wall)return;
+    this.camera.updateMatrixWorld(true);this.group.updateWorldMatrix(true,true);
+    const point=new THREE.Vector3();
+    let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+    // Center the actual silhouette in camera space, not the mesh's world-space
+    // bounding box. Include the inlet cap and keep all field coordinates intact.
+    for(const mesh of [this.wall,this.inlet]){
+      const positions=mesh.geometry.attributes.position;
+      for(let i=0;i<positions.count;i++){
+        point.fromBufferAttribute(positions,i).applyMatrix4(mesh.matrixWorld).applyMatrix4(this.camera.matrixWorldInverse);
+        minX=Math.min(minX,point.x);maxX=Math.max(maxX,point.x);
+        minY=Math.min(minY,point.y);maxY=Math.max(maxY,point.y);
+      }
+    }
+    const stacked=state.mode==='compare'&&window.innerWidth<=430;
+    const targetY=stacked?h/2:Math.max(0,Math.min(h,window.innerHeight/2-rect.top));
+    const padding=Math.min(18,w*.05,h*.05);
+    const roomY=Math.max(1,Math.min(targetY,h-targetY)-padding);
+    const half=Math.max(1.85*Math.max(1,h/w),(maxY-minY)*h/(4*roomY),(maxX-minX)*h/(2*Math.max(1,w-2*padding)));
+    const cx=(minX+maxX)/2;
+    const cy=(minY+maxY)/2-(1-2*targetY/h)*half/this.camera.zoom;
+    this.camera.left=cx-half*w/h;this.camera.right=cx+half*w/h;
+    this.camera.top=cy+half;this.camera.bottom=cy-half;
+    this.camera.updateProjectionMatrix();
+  }
   build(c,kind){
     cleanup(this.group);this.kind=kind;this.particles=null;this.paths=null;
     const solid=kind==='geometry';
     this.wall=new THREE.Mesh(bufferGeometry(c.surface),new THREE.MeshPhysicalMaterial({color:solid?0x48aca8:0x9bd8df,metalness:.08,roughness:solid?.25:.38,clearcoat:.7,clearcoatRoughness:.16,transparent:!solid,opacity:solid?1:state.opacity,side:THREE.DoubleSide,depthWrite:solid}));
     this.wall.renderOrder=3;this.group.add(this.wall);
     const inlet=new THREE.Mesh(bufferGeometry(c.inlet),new THREE.MeshStandardMaterial({color:0xe9b26e,metalness:.1,roughness:.4,transparent:!solid,opacity:solid?.9:.28,side:THREE.DoubleSide,depthWrite:solid}));
-    inlet.renderOrder=4;this.group.add(inlet);
+    this.inlet=inlet;inlet.renderOrder=4;this.group.add(inlet);
     if(solid)return;
     const predicted=kind!=='reference';const field=predicted?c.predicted:c.reference;
     if(kind==='error'){
@@ -83,10 +110,12 @@ try{left=new VesselView($('canvasA'));right=new VesselView($('canvasB'));}
 catch(error){$('webglError').hidden=false;throw error;}
 for(const [a,b] of [[left,right],[right,left]]){
   a.controls.addEventListener('change',()=>{
+    a.centerVessel();
     if(syncing)return;
     syncing=true;
     b.camera.position.copy(a.camera.position);b.camera.quaternion.copy(a.camera.quaternion);
     b.camera.zoom=a.camera.zoom;b.controls.target.copy(a.controls.target);b.camera.updateProjectionMatrix();
+    b.centerVessel();
     syncing=false;
   });
 }
