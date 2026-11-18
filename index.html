@@ -6,7 +6,7 @@
   <meta name="description" content="Vessel shape, predicted velocity, CFD reference, and relative L2 error.">
   <title>Vessel flow</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="style.css?v=20261118-dpi">
+  <link rel="stylesheet" href="style.css?v=20261118-physics">
 </head>
 <body>
 <main id="app">
@@ -34,6 +34,21 @@
       </math>
       <p>v̂ = saved prediction &nbsp;·&nbsp; v = CFD reference</p>
     </div>
+  </section>
+  <section class="physics-equation" aria-label="Planned physics-informed loss for steady incompressible flow">
+    <math xmlns="http://www.w3.org/1998/Math/MathML" aria-label="Planned loss equals data loss plus a weighted mean squared divergence penalty">
+      <msub><mi>ℒ</mi><mtext>planned</mtext></msub><mo>=</mo><msub><mi>ℒ</mi><mtext>data</mtext></msub>
+      <mo>+</mo><msub><mi>λ</mi><mi>c</mi></msub>
+      <msub><mrow><mo>⟨</mo><msup><mrow><mo>(</mo><mo>∇</mo><mo>⋅</mo><mover accent="true"><mi mathvariant="bold">v</mi><mo>^</mo></mover><mo>)</mo></mrow><mn>2</mn></msup><mo>⟩</mo></mrow><mi>Ω</mi></msub>
+    </math>
+    <math xmlns="http://www.w3.org/1998/Math/MathML" aria-label="Plus a weighted mean squared steady momentum residual: velocity advection plus kinematic pressure gradient minus kinematic viscosity times the velocity Laplacian">
+      <mo>+</mo><msub><mi>λ</mi><mi>m</mi></msub>
+      <msub><mrow><mo>⟨</mo><msup><mrow><mo>‖</mo>
+        <mo>(</mo><mover accent="true"><mi mathvariant="bold">v</mi><mo>^</mo></mover><mo>⋅</mo><mo>∇</mo><mo>)</mo><mover accent="true"><mi mathvariant="bold">v</mi><mo>^</mo></mover>
+        <mo>+</mo><mo>∇</mo><msub><mover accent="true"><mi>p</mi><mo>^</mo></mover><mtext>kin</mtext></msub>
+        <mo>−</mo><mi>ν</mi><msup><mo>∇</mo><mn>2</mn></msup><mover accent="true"><mi mathvariant="bold">v</mi><mo>^</mo></mover><mo>‖</mo>
+      </mrow><mn>2</mn></msup><mo>⟩</mo></mrow><mi>Ω</mi></msub>
+    </math>
   </section>
 </main>
 <script src="data.js"></script><script src="app.bundle.js?v=20261118-center"></script>

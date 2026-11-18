@@ -2,6 +2,8 @@
 
 Five views: vessel shape, predicted velocity, CFD reference, vector-error magnitude, and side-by-side comparison. Drag to rotate and scroll to zoom. Keyboard: 1–5 switches views, Space pauses the flow animation, R resets the camera.
 
+The equation marked `L_planned` shows the proposed training objective: data loss plus weighted mean squared continuity and steady incompressible Navier–Stokes momentum residuals. `p_kin` is kinematic pressure, `nu` is kinematic viscosity, and angle brackets denote a spatial mean. The weights set the relative scales of the losses. This equation describes planned work; the displayed saved prediction was not trained with these added terms.
+
 The error box shows the **full-field relative L2 velocity error**, summed over all 30,000 interior points and three vector components:
 
 ```text
